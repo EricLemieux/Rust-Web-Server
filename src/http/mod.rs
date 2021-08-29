@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::str::FromStr;
-use strum_macros::EnumString;
+use strum_macros::{EnumString, ToString};
 
-#[derive(Debug, PartialEq, EnumString)]
+#[derive(Debug, PartialEq, EnumString, ToString)]
 pub enum HttpMethod {
     GET,
     PUT,
@@ -11,7 +11,7 @@ pub enum HttpMethod {
     OPTIONS,
 }
 
-#[derive(Debug, PartialEq, EnumString)]
+#[derive(Debug, PartialEq, EnumString, ToString)]
 pub enum HttpVersion {
     #[strum(serialize = "HTTP/1.1")]
     Http1_1,
@@ -76,5 +76,39 @@ impl FromStr for HttpRequest {
             body: String::from(body),
             headers,
         })
+    }
+}
+
+impl ToString for HttpRequest {
+    fn to_string(&self) -> String {
+        let first_line = format!(
+            "{} {} {}",
+            self.method.to_string(),
+            self.route,
+            self.version.to_string()
+        );
+        let headers = "Foo: Bar";
+
+        format!("{}\r\n{}\r\n\r\n{}", first_line, headers, self.body)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn request_to_string() {
+        let request = HttpRequest {
+            version: HttpVersion::Http1_1,
+            method: HttpMethod::GET,
+            route: "/".to_string(),
+            body: "".to_string(),
+            headers: Default::default(),
+        };
+
+        let expected = "GET / HTTP/1.1\r\nFoo: Bar\r\n\r\n";
+
+        assert_eq!(expected, request.to_string())
     }
 }
