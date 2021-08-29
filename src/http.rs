@@ -42,7 +42,7 @@ impl FromStr for HttpRequest {
 
         let raw_header_components: Vec<&str> = raw_headers.split("\r\n").collect();
         let start_line: &str = raw_header_components.get(0).unwrap();
-        let first_line_components: Vec<_> = start_line.split(" ").collect();
+        let first_line_components: Vec<_> = start_line.split(' ').collect();
 
         let mut headers: HashMap<String, String> = HashMap::new();
 

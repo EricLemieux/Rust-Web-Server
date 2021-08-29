@@ -19,7 +19,7 @@ fn main() {
 fn handler(mut stream: TcpStream) {
     let mut buffer = [0; 512];
 
-    stream.read(&mut buffer).unwrap();
+    stream.read_exact(&mut buffer).unwrap();
     let request_string: String = String::from_utf8_lossy(&buffer[..]).parse().unwrap();
 
     eprintln!("{}", request_string);
@@ -28,7 +28,9 @@ fn handler(mut stream: TcpStream) {
         Ok(message) => message,
         Err(error) => {
             eprintln!("{}", error);
-            stream.write("HTTP/1.1 400 OK\r\n\r\n".as_bytes()).unwrap();
+            stream
+                .write_all("HTTP/1.1 400 OK\r\n\r\n".as_bytes())
+                .unwrap();
             stream.flush().unwrap();
             return;
         }
@@ -45,6 +47,6 @@ fn handler(mut stream: TcpStream) {
 
     eprintln!("Response: {}", response);
 
-    stream.write(response.as_bytes()).unwrap();
+    stream.write_all(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
