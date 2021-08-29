@@ -22,7 +22,7 @@ fn handler(mut stream: TcpStream) {
     stream.read(&mut buffer).unwrap();
     let request_string: String = String::from_utf8_lossy(&buffer[..]).parse().unwrap();
 
-    let message = match rust_web_server::HttpMessage::from_str(request_string.as_str()) {
+    let message = match rust_web_server::http::HttpRequest::from_str(request_string.as_str()) {
         Ok(message) => message,
         Err(error) => {
             eprintln!("{}", error);
