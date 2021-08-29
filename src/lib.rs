@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 use strum_macros::EnumString;
+use crate::HttpVersion::Http1_1;
 
 #[derive(Debug, PartialEq, EnumString)]
 pub enum HttpMethod {
@@ -26,15 +27,17 @@ pub struct HttpMessage {
     headers: HashMap<String, String>,
 }
 
-impl HttpMessage {
+impl FromStr for HttpMessage {
+    type Err = String;
+
     /// Construct a HttpMessage from a string message received.
     ///
     /// Parsing based on the structure defined in this article.
     /// https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
-    pub fn new(request: String) -> Result<HttpMessage, String> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Split the message into two based on the blank line that separates the headers from the
         // message body.
-        let split_request: Vec<&str> = request.split("\r\n\r\n").collect();
+        let split_request: Vec<&str> = s.split("\r\n\r\n").collect();
         let raw_headers: &str = split_request.get(0).unwrap();
         let body: &str = split_request.get(1).unwrap();
 

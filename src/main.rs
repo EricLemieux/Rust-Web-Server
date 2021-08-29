@@ -1,5 +1,6 @@
 use std::io::prelude::*;
 use std::net::{SocketAddr, TcpListener, TcpStream};
+use std::str::FromStr;
 
 fn main() {
     let port = 8080;
@@ -19,9 +20,9 @@ fn handler(mut stream: TcpStream) {
     let mut buffer = [0; 512];
 
     stream.read(&mut buffer).unwrap();
-    let request_string = String::from_utf8_lossy(&buffer[..]);
+    let request_string: String = String::from_utf8_lossy(&buffer[..]).parse().unwrap();
 
-    let message = match rust_web_server::HttpMessage::new(request_string.parse().unwrap()) {
+    let message = match rust_web_server::HttpMessage::from_str(request_string.as_str()) {
         Ok(message) => message,
         Err(error) => {
             eprintln!("{}", error);
