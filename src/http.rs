@@ -93,6 +93,25 @@ impl ToString for HttpRequest {
     }
 }
 
+#[derive(Debug)]
+struct HttpResponse {
+    version: HttpVersion,
+    status: String,
+    headers: HashMap<String, String>,
+    body: String,
+}
+
+impl ToString for HttpResponse {
+    fn to_string(&self) -> String {
+        format!(
+            "{} {}\r\n\r\n{}",
+            self.version.to_string(),
+            self.status,
+            self.body
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -110,5 +129,19 @@ mod tests {
         let expected = "GET / HTTP/1.1\r\nFoo: Bar\r\n\r\n";
 
         assert_eq!(expected, request.to_string())
+    }
+
+    #[test]
+    fn response_to_string() {
+        let response = HttpResponse {
+            version: HttpVersion::Http1_1,
+            status: "200 OK".to_string(),
+            headers: Default::default(),
+            body: "Hello world!".to_string(),
+        };
+
+        let expected = "HTTP/1.1 200 OK\r\n\r\nHello world!";
+
+        assert_eq!(expected, response.to_string());
     }
 }
