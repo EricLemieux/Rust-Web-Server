@@ -1,3 +1,4 @@
+use crate::http::http_status::HttpStatus;
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -99,7 +100,7 @@ impl ToString for HttpRequest {
 #[derive(Debug)]
 struct HttpResponse {
     version: HttpVersion,
-    status: String,
+    status: HttpStatus,
     headers: HashMap<String, String>,
     body: String,
 }
@@ -108,7 +109,7 @@ impl HttpResponse {
     fn new() -> Self {
         HttpResponse {
             version: HttpVersion::Http1_1,
-            status: "".to_string(),
+            status: HttpStatus::OK,
             headers: Default::default(),
             body: "".to_string(),
         }
@@ -120,7 +121,7 @@ impl ToString for HttpResponse {
         format!(
             "{} {}\r\n\r\n{}",
             self.version.to_string(),
-            self.status,
+            self.status.to_string(),
             self.body
         )
     }
@@ -149,7 +150,7 @@ mod tests {
     fn response_to_string() {
         let response = HttpResponse {
             version: HttpVersion::Http1_1,
-            status: "200 OK".to_string(),
+            status: HttpStatus::OK,
             headers: Default::default(),
             body: "Hello world!".to_string(),
         };
