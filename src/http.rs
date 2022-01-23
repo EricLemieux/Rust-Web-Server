@@ -98,7 +98,7 @@ impl ToString for HttpRequest {
 }
 
 #[derive(Debug)]
-struct HttpResponse {
+pub struct HttpResponse {
     version: HttpVersion,
     status: HttpStatus,
     headers: HashMap<String, String>,
@@ -106,13 +106,21 @@ struct HttpResponse {
 }
 
 impl HttpResponse {
-    fn new() -> Self {
+    pub fn new() -> Self {
         HttpResponse {
             version: HttpVersion::Http1_1,
             status: HttpStatus::OK,
             headers: Default::default(),
             body: "".to_string(),
         }
+    }
+
+    pub fn status(&mut self, status: HttpStatus) {
+        self.status = status;
+    }
+
+    pub fn body(&mut self, body: String) {
+        self.body = body;
     }
 }
 

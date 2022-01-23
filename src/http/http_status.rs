@@ -29,12 +29,20 @@ impl HttpStatus {
     // 3xx
 
     // 4xx
+    pub const BAD_REQUEST: HttpStatus = HttpStatus {
+        code: 400,
+        reason_phrase: "Bad Request",
+    };
 
     // 5xx
 
     // TODO: Figure out how to populate this with a macro.
-    const AVAILABLE: [&'static HttpStatus; 3] =
-        [&HttpStatus::OK, &HttpStatus::CREATED, &HttpStatus::ACCEPTED];
+    const AVAILABLE: [&'static HttpStatus; 4] = [
+        &HttpStatus::OK,
+        &HttpStatus::CREATED,
+        &HttpStatus::ACCEPTED,
+        &HttpStatus::BAD_REQUEST,
+    ];
 
     pub fn from(code: u16) -> Result<&'static Self, String> {
         for i in HttpStatus::AVAILABLE {

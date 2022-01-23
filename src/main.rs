@@ -1,6 +1,10 @@
+use rust_web_server::http::http_status::HttpStatus;
+use rust_web_server::http::HttpResponse;
 use std::io::prelude::*;
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::str::FromStr;
+
+mod http;
 
 fn main() {
     let port = 8080;
@@ -28,9 +32,11 @@ fn handler(mut stream: TcpStream) {
         Ok(message) => message,
         Err(error) => {
             eprintln!("{}", error);
-            stream
-                .write_all("HTTP/1.1 400 OK\r\n\r\n".as_bytes())
-                .unwrap();
+
+            let mut res = HttpResponse::new();
+            res.status(HttpStatus::BAD_REQUEST);
+
+            stream.write_all(res.to_string().as_bytes()).unwrap();
             stream.flush().unwrap();
             return;
         }
